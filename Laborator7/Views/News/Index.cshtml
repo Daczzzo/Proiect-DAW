@@ -1,0 +1,29 @@
+﻿
+@{
+                ViewBag.Title = "Afisare stiri";
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+<hr />
+
+@if (TempData.ContainsKey("message"))
+{
+    <h3 class="alert alert-info" role="alert">@ViewBag.message</h3>
+}
+
+@foreach (Laborator7.Models.News news in ViewBag.News)
+{   
+    <div class="panel panel-default">
+        @Html.Partial("ArticleInfo", news)
+        <div class="panel-footer">
+            <a class="btn btn-sm btn-success" href="/Article/Show/@news.Id">Afisare stire</a>
+        </div>
+    </div>
+    <br />
+}
+
+    
+
+
