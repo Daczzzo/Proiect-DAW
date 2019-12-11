@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace Laborator7.Models
 {
-    public class News
+    public class Proposal
     {
         [Key]
         public int Id { get; set; }

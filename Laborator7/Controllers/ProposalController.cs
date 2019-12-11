@@ -8,15 +8,15 @@ using System.Web.Mvc;
 
 namespace Laborator7.Controllers
 {
-    public class NewsController : Controller
+    public class ProposalController : Controller
     {
-        
+
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        [Authorize(Roles = "User,Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public ActionResult Index(string searchName)
         {
-            var news = db.News.Include("Category").Include("User");
+            var news = db.Proposal.Include("Category").Include("User");
 
             if (TempData.ContainsKey("message"))
             {
@@ -29,59 +29,89 @@ namespace Laborator7.Controllers
                 if (news2 != null)
                     ViewBag.News = news2;
                 else ViewBag.News = news;
-                
+
             }
             else
             {
-              ViewBag.News = news;
+                ViewBag.News = news;
             }
             return View();
         }
 
-        [Authorize(Roles = "User,Editor,Administrator")]
+        [Authorize(Roles = "Editor,Administrator")]
         public ActionResult Show(int id)
         {
-            News news = db.News.Find(id);
+            Proposal proposal = db.Proposal.Find(id);
 
-            ViewBag.afisareButoane = false;
-            if (User.IsInRole("Editor") || User.IsInRole("Administrator"))
-            {
-                ViewBag.afisareButoane = true;
-            }
+            ViewBag.afisareButoane = true;
+            //if (User.IsInRole("Editor") || User.IsInRole("Administrator"))
+            //{
+            //    ViewBag.afisareButoane = true;
+            //}
 
             ViewBag.esteAdmin = User.IsInRole("Administrator");
             ViewBag.utilizatorCurent = User.Identity.GetUserId();
 
 
-            return View(news);
+            return View(proposal);
 
         }
 
-        [Authorize(Roles = "Editor,Administrator")]
+        [Authorize(Roles = "User")]
         public ActionResult New()
         {
-            News news = new News();
+            Proposal proposal = new Proposal(); 
 
             // preluam lista de categorii din metoda GetAllCategories()
-            news.Categories = GetAllCategories();
+            proposal.Categories = GetAllCategories();
 
             // Preluam ID-ul utilizatorului curent
-            news.UserId = User.Identity.GetUserId();
+            proposal.UserId = User.Identity.GetUserId();
 
 
-            return View(news);   
+            return View(proposal);
 
         }
 
         [HttpPost]
-        [Authorize(Roles = "Editor,Administrator")]
-        public ActionResult New(News news)
+        [Authorize(Roles = "User")]
+        public ActionResult New(Proposal proposal)
         {
-            news.Categories = GetAllCategories();
+            proposal.Categories = GetAllCategories();
             try
             {
                 if (ModelState.IsValid)
                 {
+                    db.Proposal.Add(proposal);
+                    db.SaveChanges();
+                    TempData["message"] = "Articolul a fost adaugat!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View(proposal);
+                }
+            }
+            catch (Exception e)
+            {
+                return View(proposal);
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Editor,Administrator")]
+        public ActionResult NewNews(Proposal proposal)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    News news = new News();
+                    news.Title = proposal.Title;
+                    news.Content = proposal.Content;
+                    news.UserId = proposal.UserId;
+                    news.Date = proposal.Date;
+                    news.CategoryId = proposal.CategoryId;
                     db.News.Add(news);
                     db.SaveChanges();
                     TempData["message"] = "Articolul a fost adaugat!";
@@ -89,77 +119,12 @@ namespace Laborator7.Controllers
                 }
                 else
                 {
-                    return View(news);
+                    return View(proposal);
                 }
             }
             catch (Exception e)
             {
-                return View(news);
-            }
-        }
-
-
-        [Authorize(Roles = "Editor,Administrator")]
-        public ActionResult Edit(int id)
-        {
-            News news = db.News.Find(id);
-            ViewBag.Article = news;
-            news.Categories = GetAllCategories();
-
-            if (news.UserId == User.Identity.GetUserId() || 
-                User.IsInRole("Administrator"))
-            {
-                return View(news);
-            }
-            else
-            {
-                TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unui articol care nu va apartine!";
-                return RedirectToAction("Index");
-            }
-
-        }
-
-        [HttpPut]
-        [Authorize(Roles = "Editor,Administrator")]
-        public ActionResult Edit(int id, News requestNews)
-        {
-            requestNews.Categories = GetAllCategories();
-
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    News news = db.News.Find(id);
-                    if (news.UserId == User.Identity.GetUserId() ||
-                        User.IsInRole("Administrator"))
-                    {
-                        if (TryUpdateModel(news))
-                        {
-                            news.Title = requestNews.Title;
-                            news.Content = requestNews.Content;
-                            news.Date = requestNews.Date;
-                            news.CategoryId = requestNews.CategoryId;
-                            db.SaveChanges();
-                            TempData["message"] = "Articolul a fost modificat!";
-                        }
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unui articol care nu va apartine!";
-                        return RedirectToAction("Index");
-                    }
-
-                }
-                else
-                {
-                    return View(requestNews);
-                }
-
-            }
-            catch (Exception e)
-            {
-                return View(requestNews);
+                return View(proposal);
             }
         }
 
@@ -167,11 +132,11 @@ namespace Laborator7.Controllers
         [Authorize(Roles = "Editor,Administrator")]
         public ActionResult Delete(int id)
         {
-            News news= db.News.Find(id);
-            if (news.UserId == User.Identity.GetUserId() ||
+            Proposal proposal = db.Proposal.Find(id);
+            if (proposal.UserId == User.Identity.GetUserId() ||
                 User.IsInRole("Administrator"))
             {
-                db.News.Remove(news);
+                db.Proposal.Remove(proposal);
                 db.SaveChanges();
                 TempData["message"] = "Articolul a fost sters!";
                 return RedirectToAction("Index");
@@ -209,4 +174,4 @@ namespace Laborator7.Controllers
             return selectList;
         }
     }
-    }
+}

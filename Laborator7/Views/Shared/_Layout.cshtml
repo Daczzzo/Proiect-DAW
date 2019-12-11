@@ -30,10 +30,25 @@
                     @if (User.IsInRole("Editor") || User.IsInRole("Administrator"))
                     {
                         <li>@Html.ActionLink("Adaugare stire", "New", "News")</li>
+                        <li>@Html.ActionLink("Afisare propuneri", "Index", "Proposal")</li>
+                        
                     }
+                    @if (User.IsInRole("User"))
+                    {
+                        <li>@Html.ActionLink("Propune stire", "New", "Proposal")</li>
+                    }
+                    
                 </ul>
                 @Html.Partial("_LoginPartial")
+                <div class="search-bar">
+                    @using (Html.BeginForm("Index","News"))
+                    {
+                            @Html.TextBox("SearchName")
+                            <input type="submit" value="Search" />
+                    }
+                </div>
             </div>
+           
         </div>
     </div>
     <div class="container body-content">

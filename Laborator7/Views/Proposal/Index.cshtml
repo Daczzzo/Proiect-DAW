@@ -1,0 +1,40 @@
+﻿
+@{
+                ViewBag.Title = "Propune stiri";
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+<hr />
+
+@if (TempData.ContainsKey("message"))
+{
+    <h3 class="alert alert-info" role="alert">@ViewBag.message</h3>
+}
+
+@foreach (Laborator7.Models.Proposal proposal in ViewBag.News)
+{   
+    <div class="panel panel-default">
+
+        <div class="panel-heading">@proposal.Title</div>
+        <div class="panel-body">
+            Continut articol: <strong>@proposal.Content</strong>
+            <br />
+            <span class="label label-success">@proposal.Date</span>
+            <br />
+            <i class="glyphicon glyphicon-globe"></i> @proposal.Category.CategoryName
+            <br />
+            <i class="glyphicon glyphicon-user"></i> <i>articol scris de</i>
+            <strong> @proposal.User.UserName </strong>
+        </div>
+        <div class="panel-footer">
+            <a class="btn btn-sm btn-success" href="/Proposal/Show/@proposal.Id">Afisare stire</a>
+        </div>
+    </div>
+    <br />
+}
+
+    
+
+

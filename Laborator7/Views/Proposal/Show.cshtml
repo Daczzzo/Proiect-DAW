@@ -1,0 +1,48 @@
+﻿@model Laborator7.Models.Proposal
+
+@{
+                /**/
+
+                ViewBag.Title = "Show";
+}
+
+<h1>Afisare articol</h1>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">@Model.Title</div>
+    <div class="panel-body">
+        Continut articol: <strong>@Model.Content</strong>
+        <br />
+        <span class="label label-success">@Model.Date</span>
+        <br />
+        <i class="glyphicon glyphicon-globe"></i> @Model.Category.CategoryName
+        <br />
+        <i class="glyphicon glyphicon-user"></i> <i>articol scris de</i>
+        <strong> @Model.User.UserName </strong>
+    </div>
+</div>
+
+
+@if (ViewBag.afisareButoane == true && Model.UserId == ViewBag.utilizatorCurent
+    || ViewBag.esteAdmin)
+{
+    using (Html.BeginForm(actionName: "NewNews", controllerName: "Proposal", method: FormMethod.Post, routeValues: new { proposal=@Model }))
+    {
+        <button class="btn btn-success" type="submit">Posteaza stire</button>
+
+    }
+
+    using (Html.BeginForm(actionName: "Delete", controllerName: "Proposal", method: FormMethod.Post, routeValues: new { id = @Model.Id }))
+    {
+
+        @Html.HttpMethodOverride(HttpVerbs.Delete)
+        <br />
+        <button class="btn btn-success" type="submit">Sterge stire</button>
+
+    }
+}
+
+
+
+

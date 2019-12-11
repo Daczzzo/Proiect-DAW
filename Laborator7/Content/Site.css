@@ -44,3 +44,9 @@ color: #2c2c2c;
 .navbar a:hover {
     color: #5cb85c;
 }
+
+.search-bar{
+    display: inline;
+    float: right;
+    margin-top: 0.9%;
+}

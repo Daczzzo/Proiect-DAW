@@ -32,6 +32,7 @@ namespace Laborator7.Models
 
         public DbSet<News> News { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Proposal> Proposal { get;  set; }
 
         public static ApplicationDbContext Create()
         {
