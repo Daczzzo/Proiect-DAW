@@ -1,4 +1,5 @@
-﻿using Laborator7.Models;
+﻿using Laborator4.Models;
+using Laborator7.Models;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -100,31 +101,37 @@ namespace Laborator7.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Editor,Administrator")]
-        public ActionResult NewNews(Proposal proposal)
+        public ActionResult NewNews(string content, string title, string userId, int categoryId, int proposalId)
         {
+            News news = new News();
             try
             {
                 if (ModelState.IsValid)
                 {
-                    News news = new News();
-                    news.Title = proposal.Title;
-                    news.Content = proposal.Content;
-                    news.UserId = proposal.UserId;
-                    news.Date = proposal.Date;
-                    news.CategoryId = proposal.CategoryId;
+                  
+                    news.Title = title;
+                    news.Content = content;
+                    news.UserId = userId;
+                    news.Date = DateTime.Now;
+                    news.CategoryId = categoryId;
                     db.News.Add(news);
+                    db.SaveChanges();
+
+                    Proposal proposal = new Proposal();
+                    proposal = db.Proposal.Find(proposalId);
+                    db.Proposal.Remove(proposal);
                     db.SaveChanges();
                     TempData["message"] = "Articolul a fost adaugat!";
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    return View(proposal);
+                    return View(news);
                 }
             }
             catch (Exception e)
             {
-                return View(proposal);
+                return View(news);
             }
         }
 

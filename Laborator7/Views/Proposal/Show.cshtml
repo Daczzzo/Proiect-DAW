@@ -27,7 +27,7 @@
 @if (ViewBag.afisareButoane == true && Model.UserId == ViewBag.utilizatorCurent
     || ViewBag.esteAdmin)
 {
-    using (Html.BeginForm(actionName: "NewNews", controllerName: "Proposal", method: FormMethod.Post, routeValues: new { proposal=@Model }))
+    using (Html.BeginForm(actionName: "NewNews", controllerName: "Proposal", method: FormMethod.Post, routeValues: new { content=@Model.Content,title=@Model.Title,userId=@Model.User.Id, categoryId=@Model.CategoryId, proposalId=@Model.Id}))
     {
         <button class="btn btn-success" type="submit">Posteaza stire</button>
 
